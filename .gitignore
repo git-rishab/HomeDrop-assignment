@@ -1,3 +1,9 @@
+# package directories
 node_modules
-package-lock.json
+jspm_packages
 .env
+serverless.yml
+package-lock.json
+
+# Serverless directories
+.serverless

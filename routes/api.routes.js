@@ -27,7 +27,9 @@ apiRoute.post("/auth", async (req, res) => {
     }
 })
 
-apiRoute.post("/send-report", authorize, async (req, res) => {
+apiRoute.use(authorize)
+
+apiRoute.post("/send-report", async (req, res) => {
     try {
         const user = req.body.phone || req.body.email;
         const emaileRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
@@ -35,47 +37,49 @@ apiRoute.post("/send-report", authorize, async (req, res) => {
             return res.status(400).send({"message":"Please enter valid email, Example: rishab@gmail.com"})
         }
         const doc = new PDFDocument(); // Create a document
-        const stream = doc.pipe(fs.createWriteStream('output.pdf'));
 
         const timestamp = new Date().toLocaleString(); // Add the current timestamp
         doc.fontSize(12)
             .text(`Timestamp: ${timestamp}`, 100, 150);
         doc.text(`Email: ${user}`, 100, 170); // Add the email
-        doc.end(); // Finalize the PDF document and end the stream
 
-        stream.on('finish', async()=>{
+        const pdfBuffer = await new Promise(resolve => {
+            const buffers = [];
+            doc.on("data", buffer => buffers.push(buffer));
+            doc.on("end", () => resolve(Buffer.concat(buffers)));
+            doc.end();
+        });
+        
+        const pdfBase64 = pdfBuffer.toString("base64");
 
-            const pdfAttachment = fs.readFileSync('output.pdf'); // Read the PDF file content
+        sgMail.setApiKey(process.env.MAIL);
+        const msg = {
+            to: user,
+            from: 'rkc3660@gmail.com', // Use the email address or domain you verified above
+            subject: 'Attachment here!',
+            html: `<p>Here is your attachment!</p>`,
+            attachments: [
+                {
+                    content: pdfBase64,
+                    filename: 'output.pdf',
+                    type: 'application/pdf',
+                    disposition: 'attachment'
+                }
+            ]
+        }
 
-            sgMail.setApiKey(process.env.MAIL);
-            const msg = {
-                to: user,
-                from: 'rkc3660@gmail.com', // Use the email address or domain you verified above
-                subject: 'Attachment here!',
-                html: `<p>Here is your attachment!</p>`,
-                attachments: [
-                    {
-                        content: pdfAttachment.toString('base64'),
-                        filename: 'output.pdf',
-                        type: 'application/pdf',
-                        disposition: 'attachment'
-                    }
-                ]
-            }
+        sgMail
+            .send(msg)
+            .then(() => {
+                console.log("Mail sent via sendgrid")
+            }, error => {
+                console.error(error);
 
-            sgMail
-                .send(msg)
-                .then(() => {
-                    console.log("Mail sent via sendgrid")
-                }, error => {
-                    console.error(error);
-
-                    if (error.response) {
-                        console.error(error.response.body)
-                    }
-                });
-            
-        })
+                if (error.response) {
+                    console.error(error.response.body)
+                }
+            });
+        
         
         const data = {
             "date_created": new Date().getTime(), // Current timestamp in milliseconds
@@ -91,7 +95,7 @@ apiRoute.post("/send-report", authorize, async (req, res) => {
     }
 })
 
-apiRoute.get("/get-history", authorize, async (req, res) => {
+apiRoute.get("/get-history", async (req, res) => {
     try {
         const { history } = await UserModel.findOne({ "user": req.user })
         res.status(200).send(history);
