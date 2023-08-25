@@ -21,7 +21,7 @@ The application is deployed at the following endpoint: [Deployment Link](https:/
 
 ## Video Walkthrough
 
-A video walkthrough of the application's features and functionality can be found [here](https://www.youtube.com/watch?v=rghbY-el15A)
+A video walkthrough of the application's features and functionality can be found [here](https://www.youtube.com/watch?v=OOxP8z4eVHc)
 
 ## Getting Started
 
