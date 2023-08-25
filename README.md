@@ -99,7 +99,8 @@ The application is built using the following technologies:
   [
     {
       "date_created": 1692866222681,
-      "sent_to": "PHONE or EMAIL"
+      "sent_to": "EMAIL"
     }
+  ]
 
 For any further details or issues, please contact [rishabkumarchaurasiya@gmail.com](mailto:rishabkumarchaurasiya@gmail.com)
