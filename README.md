@@ -37,8 +37,8 @@ Make sure to configure your environment variables for database connections, AWS 
 ## Schema Design
 
 The schema design for this application involves generating dynamic PDF reports with the current date and user identity. The PDF content is designed as specified in the task.
-
-![Schema Design](path-to-schema-image.png)
+---
+![schema-design](https://github.com/git-rishab/HomeDrop-assignment/assets/114337213/8a0d9bf7-0633-4721-a4a4-1ec97af36147)
 
 ## Tech Stack
 
