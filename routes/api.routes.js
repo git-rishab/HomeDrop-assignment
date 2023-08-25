@@ -49,7 +49,7 @@ apiRoute.post("/send-report", async (req, res) => {
             doc.on("end", () => resolve(Buffer.concat(buffers)));
             doc.end();
         });
-        
+
         const pdfBase64 = pdfBuffer.toString("base64");
 
         sgMail.setApiKey(process.env.MAIL);
@@ -98,7 +98,7 @@ apiRoute.post("/send-report", async (req, res) => {
 apiRoute.get("/get-history", async (req, res) => {
     try {
         const { history } = await UserModel.findOne({ "user": req.user })
-        res.status(200).send(history);
+        res.status(200).send([...history]);
     } catch (error) {
         res.status(400).send({ "message": error.message });
     }

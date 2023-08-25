@@ -20,10 +20,6 @@ app.get("/", async(req, res) => {
     res.status(200).send({ "ok": true, "message": "welcome to backend" })
 })
 
-app.listen(5000, ()=>{
-    console.log("server running");
-})
-
 module.exports = {
     app
 }
